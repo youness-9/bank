@@ -15,7 +15,7 @@
 void WaitAndClear()
 {
     cout << "\n\nPress ENTER to continue...";
-    cin.get(); // انتظر ENTER
+    cin.get(); // انتظر ENTERss
     cout << "\033[2J\033[1;1H"; // مسح الشاشة في Linux/macOS/Windows (ANSI escape code)
 }
 

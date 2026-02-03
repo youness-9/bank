@@ -5,10 +5,306 @@
 #include <cctype>
 #include <fstream>
 #include "Info.h"
-
 using namespace std;
+void Action1(vector<string> Lines);
+vector<string> ReadInfoFromFile(string namefile);
+vector<string> VectorSplitString(string Line);
+int ShowList(stUserPass UserPass);
+void WaitAndClear();
+bool CheckIfexit(string Line, string AccountNumber);
+void UpdateAllFileForUsers(vector<string> Slines);
+int checkkForUser(stUserPass &Data, string filename);
+stUserPass addNewClientForUsers(string namefile);
+stUserPass ExtractSireOfusers(vector<string> Lines);
+void ShowUserstList(stUserPass Data);
+stUserPass StringPutInStructForUsers(vector<string> Lines);
+void PrintOneLineForUsers(stUserPass Data);
+void vipForusers(string action);
+bool FindClentForUser(stUserPass Data,string filename)
+{
+    cin >> Data.user;
+
+  if (checkkForUser(Data,filename) == 0)
+
+  {
+
+    cout << "\n Cleint with " << "[" << Data.user << "]" << " is not exit ";
+
+    return true;
+
+  }
+
+  else
+
+  {
+
+    stUserPass S1;
+
+    vector<string> Slines = ReadInfoFromFile("Users.txt");
+
+    for (string &n : Slines)
+
+    {
+
+      S1 = StringPutInStructForUsers(VectorSplitString(n));
+
+      if (S1.user == Data.user)
+
+      {
+
+        Data=S1;
+
+        PrintOneLineForUsers(S1);
+
+      }
+
+    }
+
+    return false;
+
+  }
+
+}
+
+void Action5Forusers()
+
+{
+
+  stUserPass Data;
+
+  vipForusers("Find USER Info");
+
+  FindClentForUser(Data,"Users.txt");
+
+}
+void PrintOneLineForUsers(stUserPass Data)
+{
+
+  
+
+  cout << "|" << setw(15) << Data.user;
+
+  cout << "|" << setw(12) << Data.pass;
+
+  cout << "|" << setw(20) << Data.Permsion;
+
+}
+void vipForusers(string action)
+{
+
+  cout << "-----------------------------------------------";
+
+  cout << "\n " << action << "\n";
+
+  cout << "-----------------------------------------------\n";
+
+  cout << "enter Account User: ";
+
+}
+
+bool UpdatelientForUsers(stUserPass Data)
+
+{
+    cin >> Data.user;
+  if (checkkForUser(Data,"Users.txt") == 0)
+
+  {
+
+    cout << "\n Cleint with " << "[" << Data.user << "]" << " is not exit ";
+
+    return true;
+
+  }
+
+  else
+
+  {
+
+    stUserPass S1;
+
+    stUserPass NewData;
+
+    vector<string> Slines = ReadInfoFromFile("Users.txt");
+
+    vector<string> LineWithUpdate;
+    ShowUserstList(ExtractSireOfusers(Slines));
+    for (string &n : Slines)
+
+    {
+
+      S1 = StringPutInStructForUsers(VectorSplitString(n));
+
+      if (S1.user == Data.user)
+
+      {
+
+        PrintOneLineForUsers(S1);
+
+        string ask;
+
+        cout << "Are tou sure Do you want update this client? y/n ? : ";
+
+        cin >> ask;
+
+        if (ask == "y" || ask == "Y")
+
+        {
+
+          NewData.user = Data.user;
+
+          NewData = addNewClientForUsers("Users.txt");
+
+          string S2 = NewData.user + "#//#" + NewData.pass + "#//#" + NewData.Permsion ;
+
+          LineWithUpdate.push_back(S2);
+
+        }
+
+      }
+
+      else
+
+      {
+
+        LineWithUpdate.push_back(n);
+
+      }
+
+    }
+
+    cout << "\n the client has been Updated successufly";
+
+    UpdateAllFileForUsers(LineWithUpdate);
+
+    return false;
+
+  }
+
+}
+
+void Action4Forusers()
+
+{
+
+  stUserPass Data;
+
+  vipForusers("Update info client");
+
+  UpdatelientForUsers(Data);
+
+}
 
 
+stUserPass StringPutInStructForUsers(vector<string> Lines)
+{
+    stUserPass Data;
+    Data.user = Lines[0];
+    Data.pass = Lines[1];
+    Data.Permsion = Lines[2]; // Permsion هو string
+    return Data;
+}
+void UpdateAllFileForUsers(vector<string> Slines)
+
+{
+
+  fstream file;
+
+  file.open("Users.txt", ios::out);
+
+  if (file.is_open())
+
+  {
+
+    for (string n : Slines)
+
+    {
+
+      file << n << endl;
+
+    }
+
+  }
+
+  file.close();
+
+}
+
+int checkkForUser(stUserPass &Data, string filename)
+{
+    int counter = 0;
+    for (string &n : ReadInfoFromFile(filename))
+    {
+        bool check = CheckIfexit(n, Data.user);
+        if (check)
+        {
+            counter++;
+        }
+    }
+    return counter;
+}
+
+
+
+bool DeletelientForUsers(stUserPass Data)
+
+{
+
+    cin >> Data.user;
+  if (checkkForUser(Data,"Users.txt") == 0)
+
+  {
+
+    cout << "\n Cleint with " << "[" << Data.user << "]" << " is not exit ";
+
+    return true;
+
+  }
+
+  else
+
+  {
+
+    stUserPass S1;
+
+    vector<string> Slines = ReadInfoFromFile("Users.txt");
+
+    vector<string> LineWithDeleted;
+
+    for (string &n : Slines)
+
+    {
+
+      S1 = StringPutInStructForUsers(VectorSplitString(n));
+
+      if (S1.user != Data.user)
+
+      {
+
+        LineWithDeleted.push_back(n);
+
+      }
+
+      else
+
+      {
+
+        continue;
+
+      }
+
+    }
+
+    UpdateAllFileForUsers(LineWithDeleted);
+
+    cout << "\n the client has been deleted successufly";
+
+    return false;
+
+  }
+
+}
+
+  
 stPermition AskForPermition()
 {
     char ans;
@@ -61,26 +357,8 @@ stPermition AskForPermition()
     }
 }
 
-void Action1(vector<string> Lines);
-vector<string> ReadInfoFromFile(string namefile);
-vector<string> VectorSplitString(string Line);
-int ShowList(stUserPass UserPass);
-void WaitAndClear();
-bool CheckIfexit(string Line, string AccountNumber);
 
-int checkkForUser(stUserPass &Data, string filename)
-{
-    int counter = 0;
-    for (string &n : ReadInfoFromFile(filename))
-    {
-        bool check = CheckIfexit(n, Data.user);
-        if (check)
-        {
-            counter++;
-        }
-    }
-    return counter;
-}
+
 
 void UpdateFileForUsers(stUserPass Data)
 {
@@ -107,14 +385,7 @@ void ReturnToPageOneForUsers(stUserPass UserPass)
     ShowList(UserPass);
 }
 
-stUserPass StringPutInStructForUsers(vector<string> Lines)
-{
-    stUserPass Data;
-    Data.user = Lines[0];
-    Data.pass = Lines[1];
-    Data.Permsion = Lines[2]; // Permsion هو string
-    return Data;
-}
+
 
 bool CheckPermition(stUserPass UserPass, int requiredPermission)
 {
@@ -204,6 +475,7 @@ void Action1User(vector<string> Lines)
     PrintUsersSpalted(Lines);
 }
 
+
 stUserPass addNewClientForUsers(string namefile)
 {
     stPermition Permition;
@@ -242,6 +514,12 @@ void Action2ForUser()
         cin >> ask;
     }
 }
+void Action3ForUser()
+{
+     stUserPass Data;
+    DeletelientForUsers(Data);
+}
+
 
 void askLoop(enNumbreActionUser NumbreAction, stUserPass UserPass)
 {
@@ -257,16 +535,70 @@ void askLoop(enNumbreActionUser NumbreAction, stUserPass UserPass)
         }
         else
         {
+            ReturnToPageOneForUsers(UserPass);
             cout << "\nYou don't have permission to access this feature!" << endl;
         }
-        ReturnToPageOneForUsers(UserPass);
+        
         break;
     }
     case enNumbreActionUser::Action21OfUsers:
     {
-        WaitAndClear();
-        Action2ForUser();
-        ReturnToPageOneForUsers(UserPass);
+        if (CheckPermition(UserPass, Permition.ADD_CLIENT))
+        {
+            WaitAndClear();
+            Action2ForUser();
+        }
+        else
+        {
+            ReturnToPageOneForUsers(UserPass);
+        cout << "\nYou don't have permission to access this feature!" << endl;
+        }
+        break;
+    }
+        case enNumbreActionUser::Action31OfUsers:
+    {
+        if (CheckPermition(UserPass, Permition.DELETE_CLIENT))
+        {
+            WaitAndClear();
+            vipForusers("delete client in file");
+            Action3ForUser();
+            
+        }
+        else
+        {
+            ReturnToPageOneForUsers(UserPass);
+        cout << "\nYou don't have permission to access this feature!" << endl;
+        }
+        break;
+    }
+        case enNumbreActionUser::Action41OfUsers:
+    {
+        if (CheckPermition(UserPass, Permition.UPDATE_CLIENT))
+        {
+            WaitAndClear();
+            Action4Forusers();
+            
+        }
+        else
+        {
+            ReturnToPageOneForUsers(UserPass);
+        cout << "\nYou don't have permission to access this feature!" << endl;
+        }
+        break;
+    }
+
+            case enNumbreActionUser::Action51OfUsers:
+    {
+        if (CheckPermition(UserPass, Permition.FIND_CLIENT))
+        {
+                        Action5Forusers();
+            
+        }
+        else
+        {
+            ReturnToPageOneForUsers(UserPass);
+        cout << "\nYou don't have permission to access this feature!" << endl;
+        }
         break;
     }
     }
